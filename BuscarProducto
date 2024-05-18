@@ -1,0 +1,144 @@
+//BuscarProducto.h//
+#pragma once
+#include <iostream>
+#include <fstream>
+#include <string>
+
+using namespace std;
+
+class BuscarProducto {
+public:
+    BuscarProducto();
+    BuscarProducto(string nom, string desc, float precio);
+
+    void setProducto(string nom, string desc, float precio);
+    string getNombre();
+    string getDescripcion();
+    float getPrecio();
+
+    void guardarArchivo(ofstream& fsalida);
+    bool leerArchivo(ifstream& fentrada);
+    bool eliminar(fstream& fes, int nroReg);
+    bool modificar(fstream& fes, int nroReg);
+    bool buscar(ifstream& fentrada, int nroReg);
+
+    int getTamBytesRegistro();
+private:
+    string nombre;
+    string descripcion;
+    float precio;
+    char estado;
+};
+//BuscarProducto.cpp//
+#include "BuscarProducto.h"
+
+using namespace std;
+
+BuscarProducto::BuscarProducto() {
+    nombre = "";
+    descripcion = "";
+    precio = 0.0;
+    estado = ' ';
+}
+
+BuscarProducto::BuscarProducto(string nom, string desc, float prec) {
+    nombre = nom;
+    descripcion = desc;
+    precio = prec;
+    estado = 'A';
+}
+
+void BuscarProducto::setProducto(string nom, string desc, float prec) {
+    nombre = nom;
+    descripcion = desc;
+    precio = prec;
+}
+
+string BuscarProducto::getNombre() {
+    return nombre;
+}
+
+string BuscarProducto::getDescripcion() {
+    return descripcion;
+}
+
+float BuscarProducto::getPrecio() {
+    return precio;
+}
+
+void BuscarProducto::guardarArchivo(ofstream& fsalida) {
+    fsalida.write(reinterpret_cast<char*>(&nombre), sizeof(nombre));
+    fsalida.write(reinterpret_cast<char*>(&descripcion), sizeof(descripcion));
+    fsalida.write(reinterpret_cast<char*>(&precio), sizeof(precio));
+    fsalida.write(reinterpret_cast<char*>(&estado), sizeof(estado));
+}
+
+bool BuscarProducto::leerArchivo(ifstream& fentrada) {
+    if (fentrada.is_open()) {
+        fentrada.read(reinterpret_cast<char*>(&nombre), sizeof(nombre));
+        if (!fentrada.eof()) {
+            fentrada.read(reinterpret_cast<char*>(&descripcion), sizeof(descripcion));
+            fentrada.read(reinterpret_cast<char*>(&precio), sizeof(precio));
+            fentrada.read(reinterpret_cast<char*>(&estado), sizeof(estado));
+            return true;
+        }
+    }
+    return false;
+}
+
+bool BuscarProducto::eliminar(fstream& fes, int nroReg) {
+    if (fes.is_open()) {
+        fes.seekg(getTamBytesRegistro() * (nroReg - 1), ios::beg);
+        fes.read(reinterpret_cast<char*>(&nombre), sizeof(nombre));
+        if (!fes.eof()) {
+            fes.read(reinterpret_cast<char*>(&descripcion), sizeof(descripcion));
+            fes.read(reinterpret_cast<char*>(&precio), sizeof(precio));
+            estado = 'E';
+            fes.seekp(getTamBytesRegistro() * (nroReg - 1), ios::beg);
+            fes.write(reinterpret_cast<char*>(&nombre), sizeof(nombre));
+            fes.write(reinterpret_cast<char*>(&descripcion), sizeof(descripcion));
+            fes.write(reinterpret_cast<char*>(&precio), sizeof(precio));
+            fes.write(reinterpret_cast<char*>(&estado), sizeof(estado));
+            return true;
+        }
+    }
+    return false;
+}
+
+bool BuscarProducto::modificar(fstream& fes, int nroReg) {
+    if (fes.is_open()) {
+        string nombreAux = nombre;
+        fes.seekg(getTamBytesRegistro() * (nroReg - 1), ios::beg);
+        fes.read(reinterpret_cast<char*>(&nombre), sizeof(nombre));
+        if (!fes.eof()) {
+            nombre = nombreAux;
+            estado = 'A';
+            fes.seekp(getTamBytesRegistro() * (nroReg - 1), ios::beg);
+            fes.write(reinterpret_cast<char*>(&nombre), sizeof(nombre));
+            fes.write(reinterpret_cast<char*>(&descripcion), sizeof(descripcion));
+            fes.write(reinterpret_cast<char*>(&precio), sizeof(precio));
+            fes.write(reinterpret_cast<char*>(&estado), sizeof(estado));
+            return true;
+        }
+    }
+    return false;
+}
+
+bool BuscarProducto::buscar(ifstream& fentrada, int nroReg) {
+    if (fentrada.is_open()) {
+        fentrada.seekg(getTamBytesRegistro() * (nroReg - 1), ios::beg);
+        fentrada.read(reinterpret_cast<char*>(&nombre), sizeof(nombre));
+        if (!fentrada.eof()) {
+            fentrada.read(reinterpret_cast<char*>(&descripcion), sizeof(descripcion));
+            fentrada.read(reinterpret_cast<char*>(&precio), sizeof(precio));
+            fentrada.read(reinterpret_cast<char*>(&estado), sizeof(estado));
+            return true;
+        }
+    }
+    return false;
+}
+
+int BuscarProducto::getTamBytesRegistro() {
+    return sizeof(nombre) + sizeof(descripcion) + sizeof(precio) + sizeof(estado);
+}
+
