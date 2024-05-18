@@ -1,0 +1,114 @@
+//RegistroProducto.h//
+#pragma once
+#include <string>
+#include <fstream>
+
+using namespace std;
+
+class RegistroProducto {
+public:
+    RegistroProducto(); // Constructor
+    ~RegistroProducto(); // Destructor
+
+    void agregarProducto(const string& nombreProducto, double precio);
+    void mostrarProductos() const;
+
+private:
+    struct Producto {
+        string nombre;
+        double precio;
+    };
+
+    Producto* productos;
+    int numProductos;
+
+    void guardarEnArchivo() const;
+    void leerDesdeArchivo();
+};
+
+//RegistroProducto.cpp//
+#include "RegistroProducto.h"
+#include <iostream>
+
+RegistroProducto::RegistroProducto() {
+    numProductos = 0;
+    productos = nullptr;
+    leerDesdeArchivo(); // Cargar datos desde el archivo al crear un objeto
+}
+
+RegistroProducto::~RegistroProducto() {
+    guardarEnArchivo(); // Guardar datos en el archivo al destruir el objeto
+    delete[] productos; // Liberar la memoria asignada dinámicamente
+}
+
+void RegistroProducto::agregarProducto(const string& nombreProducto, double precio) {
+    // Crear un nuevo producto
+    Producto nuevoProducto;
+    nuevoProducto.nombre = nombreProducto;
+    nuevoProducto.precio = precio;
+
+    // Incrementar el tamaño de la lista en 1
+    Producto* nuevaLista = new Producto[numProductos + 1];
+
+    // Copiar los productos existentes a la nueva lista
+    for (int i = 0; i < numProductos; ++i) {
+        nuevaLista[i] = productos[i];
+    }
+
+    // Agregar el nuevo producto al final de la lista
+    nuevaLista[numProductos] = nuevoProducto;
+
+    // Liberar la memoria de la lista anterior
+    delete[] productos;
+
+    // Actualizar el puntero de la lista
+    productos = nuevaLista;
+
+    // Incrementar el contador de productos
+    ++numProductos;
+
+    // Guardar los cambios en el archivo
+    guardarEnArchivo();
+}
+
+void RegistroProducto::mostrarProductos() const {
+    cout << "Productos registrados:" << endl;
+    for (int i = 0; i < numProductos; ++i) {
+        cout << "Nombre: " << productos[i].nombre << ", Precio: " << productos[i].precio << endl;
+    }
+}
+
+void RegistroProducto::guardarEnArchivo() const {
+    ofstream archivo("productos.dat", ios::binary);
+    if (archivo) {
+        archivo.write(reinterpret_cast<const char*>(&numProductos), sizeof(numProductos));
+        for (int i = 0; i < numProductos; ++i) {
+            archivo.write(productos[i].nombre.c_str(), productos[i].nombre.size() + 1); // Guardar nombre del producto
+            archivo.write(reinterpret_cast<const char*>(&productos[i].precio), sizeof(productos[i].precio)); // Guardar precio
+        }
+        archivo.close();
+    }
+    else {
+        cerr << "Error al abrir el archivo para escritura." << endl;
+    }
+}
+
+void RegistroProducto::leerDesdeArchivo() {
+    ifstream archivo("productos.dat", ios::binary);
+    if (archivo) {
+        archivo.read(reinterpret_cast<char*>(&numProductos), sizeof(numProductos));
+        productos = new Producto[numProductos];
+        for (int i = 0; i < numProductos; ++i) {
+            char nombre[100];
+            archivo.read(nombre, sizeof(nombre)); // Leer nombre del producto
+            productos[i].nombre = nombre;
+            archivo.read(reinterpret_cast<char*>(&productos[i].precio), sizeof(productos[i].precio)); // Leer precio
+        }
+        archivo.close();
+    }
+    else {
+        cerr << "Error al abrir el archivo para lectura. Creando archivo nuevo." << endl;
+        productos = nullptr;
+        numProductos = 0;
+    }
+}
