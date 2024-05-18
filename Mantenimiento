@@ -1,0 +1,156 @@
+//Mantenimiento.h//
+#pragma once
+#include <iostream>
+#include <fstream>
+#include <string>
+#include "RegistroMP.h"
+using namespace std;
+
+class Mantenimiento {
+private:
+    string nombre;
+    int cantidad;
+    RegistroMP* registro;
+
+public:
+    Mantenimiento(string nombre, int cantidad);
+    void mostrarOpciones();
+    void adicionarNuevo(RegistroMP& registro);
+    void listar(RegistroMP& registro);
+    void buscarReg(RegistroMP& registro);
+    void eliminarReg(RegistroMP& registro);
+    bool modificarReg(RegistroMP& registro, int nroReg);
+    int getTamBytesRegistro();
+};
+//Mantenimiento.cpp//
+#include <iostream>
+#include <fstream>
+#include <string>
+#include "Mantenimiento.h"
+
+Mantenimiento::Mantenimiento(string nombre, int cantidad) {
+    this->nombre = nombre;
+    this->cantidad = cantidad;
+}
+
+void Mantenimiento::mostrarOpciones() {
+    cout << "Nombre del mantenimiento: " << nombre << endl;
+    cout << "Cantidad recomendada: " << cantidad << endl;
+}
+
+void Mantenimiento::adicionarNuevo(RegistroMP& registro) {
+    string fecha, lugar;
+    cout << "Ingrese la fecha del mantenimiento (dd/mm/aaaa): ";
+    cin >> fecha;
+    cout << "Ingrese el lugar del mantenimiento: ";
+    cin.ignore();
+    getline(cin, lugar);
+    RegistroMP nuevoRegistro(nombre, fecha, lugar, cantidad);
+    ofstream fsalida("registros.dat", ios::app | ios::binary);
+    nuevoRegistro.guardarArchivo(fsalida);
+    fsalida.close();
+    cout << "Registro agregado exitosamente." << endl;
+}
+
+void Mantenimiento::listar(RegistroMP& registro) {
+    ifstream fentrada("registros.dat", ios::binary);
+    while (registro.leerArchivo(fentrada)) {
+        cout << "Nombre: " << registro.getNombre() << endl;
+        cout << "Fecha: " << registro.getFecha() << endl;
+        cout << "Lugar: " << registro.getLugar() << endl;
+        cout << "Cantidad: " << registro.getNumero() << endl;
+        cout << endl;
+    }
+    fentrada.close();
+}
+
+void Mantenimiento::buscarReg(RegistroMP& registro) {
+    string nombreBusqueda;
+    cout << "Ingrese el nombre del mantenimiento a buscar: ";
+    cin.ignore();
+    getline(cin, nombreBusqueda);
+
+    ifstream fentrada("registros.dat", ios::binary);
+    bool encontrado = false;
+    while (registro.leerArchivo(fentrada)) {
+        if (registro.getNombre() == nombreBusqueda) {
+            cout << "Nombre: " << registro.getNombre() << endl;
+            cout << "Fecha: " << registro.getFecha() << endl;
+            cout << "Lugar: " << registro.getLugar() << endl;
+            cout << "Cantidad: " << registro.getNumero() << endl;
+            cout << endl;
+            encontrado = true;
+        }
+    }
+    if (!encontrado) {
+        cout << "No se encontraron registros para el mantenimiento buscado." << endl;
+    }
+    fentrada.close();
+}
+
+void Mantenimiento::eliminarReg(RegistroMP& registro) {
+}
+bool Mantenimiento::modificarReg(RegistroMP& registro) {
+    int opcion;
+    cout << "Seleccione el registro a modificar:" << endl;
+    cout << "1. Nombre" << endl;
+    cout << "2. Fecha" << endl;
+    cout << "3. Lugar" << endl;
+    cout << "4. Cantidad" << endl;
+    cout << "Seleccione una opción: ";
+    cin >> opcion;
+
+    switch (opcion) {
+    case 1: {
+        string nuevoNombre;
+        cout << "Ingrese el nuevo nombre: ";
+        cin.ignore();
+        getline(cin, nuevoNombre);
+        registro.setNombre(nuevoNombre);
+        break;
+    }
+    case 2: {
+        string nuevaFecha;
+        cout << "Ingrese la nueva fecha (dd/mm/aaaa): ";
+        cin >> nuevaFecha;
+        registro.setFecha(nuevaFecha);
+        break;
+    }
+    case 3: {
+        string nuevoLugar;
+        cout << "Ingrese el nuevo lugar: ";
+        cin.ignore();
+        getline(cin, nuevoLugar);
+        registro.setLugar(nuevoLugar);
+        break;
+    }
+    case 4: {
+        int nuevaCantidad;
+        cout << "Ingrese la nueva cantidad: ";
+        cin >> nuevaCantidad;
+        registro.setCantidad(nuevaCantidad);
+        break;
+    }
+    default:
+        cout << "Opción inválida." << endl;
+        return false;
+    }
+    fstream fes("registros.dat", ios::in | ios::out | ios::binary);
+    if (!fes.is_open()) {
+        cout << "Error al abrir el archivo de registros." << endl;
+        return false;
+    }
+
+    if (registro.modificarReg(fes)) {
+        cout << "Registro modificado correctamente." << endl;
+        fes.close();
+        return true;
+    }
+    else {
+        cout << "Error al modificar el registro." << endl;
+        fes.close();
+        return false;
+    }
+}
+
+}
