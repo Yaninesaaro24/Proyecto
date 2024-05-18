@@ -1,0 +1,81 @@
+//RegistroMP.H//
+#pragma once
+#include <iostream>
+#include <fstream>
+#include <string>
+using namespace std;
+
+class RegistroMP {
+private:
+    string nombre;
+    string fecha;
+    string lugar;
+    int numero;
+
+public:
+    RegistroMP();
+    RegistroMP(string nombre, string fecha, string lugar, int numero);
+    void guardarArchivo(ofstream& fsalida);
+    bool leerArchivo(ifstream& fentrada);
+    string getNombre();
+    string getFecha();
+    string getLugar();
+    int getNumero();
+    void mostrarOpciones();
+    void adicionarNuevo(RegistroMP& registro);
+    void listar(RegistroMP& registro);
+    void buscarReg(RegistroMP& registro);
+    void eliminarReg(RegistroMP& registro);
+    bool modificarReg(RegistroMP& registro ,int nroReg);
+    int getTamBytesRegistro();
+};
+//RegistroMP.cpp//
+#include <iostream>
+#include <fstream>
+#include <string>
+#include "RegistroMP.h"
+
+RegistroMP::RegistroMP(string nombre, string fecha, string lugar, int numero) {
+    this->nombre = nombre;
+    this->fecha = fecha;
+    this->lugar = lugar;
+    this->numero = numero;
+}
+
+void RegistroMP::guardarArchivo(ofstream& fsalida) {
+    fsalida.write(reinterpret_cast<char*>(&nombre), sizeof(nombre));
+    fsalida.write(reinterpret_cast<char*>(&fecha), sizeof(fecha));
+    fsalida.write(reinterpret_cast<char*>(&lugar), sizeof(lugar));
+    fsalida.write(reinterpret_cast<char*>(&numero), sizeof(numero));
+}
+
+bool RegistroMP::leerArchivo(ifstream& fentrada) {
+    bool k = false;
+    if (fentrada.is_open()) {
+        fentrada.read(reinterpret_cast<char*>(&nombre), sizeof(nombre));
+        if (!fentrada.eof()) {
+            fentrada.read(reinterpret_cast<char*>(&fecha), sizeof(fecha));
+            fentrada.read(reinterpret_cast<char*>(&lugar), sizeof(lugar));
+            fentrada.read(reinterpret_cast<char*>(&numero), sizeof(numero));
+            k = true;
+        }
+    }
+    return k;
+}
+
+string RegistroMP::getNombre() {
+    return nombre;
+}
+
+string RegistroMP::getFecha() {
+    return fecha;
+}
+
+string RegistroMP::getLugar() {
+    return lugar;
+}
+
+int RegistroMP::getNumero() {
+    return numero;
+}
+//Registro MP//
