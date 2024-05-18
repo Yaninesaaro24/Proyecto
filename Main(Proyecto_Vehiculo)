@@ -1,0 +1,159 @@
+#include "stdafx.h"
+#include "string"
+#include "iostream"
+#include "conio.h"
+
+#include "stdlib.h"
+using namespace std;
+
+void main()
+{
+
+	string nombre, edad, carnet, nacionalidad, ocupacion, horas_trabajadas, salario, fecha_vinculacion, fecha_retiro, producto, producto_vendidos, producto_total, satisfaccion;
+	int op1;
+	bool salir = true;
+
+	while (salir) {
+		cout << "Seleccione su rol en la empresa:" << endl;
+		cout << "1. Gerente" << endl; // Cliente
+		cout << "2. Agricultor" << endl;
+		cout << "3. Vendedor" << endl;
+		cout << "0. Salir" << endl;
+		cin >> op1;
+		switch (op1)
+		{
+		case 1: // Gerente - Cliente
+			int op3;
+			cout << "Ingrese una de las opciones: " << endl;
+			cout << "1. Leer " << endl;
+			cout << "2. A�adir" << endl;
+			cout << "3. Eliminar" << endl;
+			cin >> op3;
+			switch (op3) {
+			case 1:
+
+				break;
+			case 2:
+				cout << "Ingrese nombre: ";
+				cin >> nombre;
+				cout << "Ingrese Edad: ";
+				cin >> edad;
+				cout << "Ingrese el carnet: ";
+				cin >> carnet;
+				cout << "Ingrese nacionalidad: ";
+				cin >> nacionalidad;
+				cout << "Ingrese el nivel de satisfaccion: ";
+				cin >> satisfaccion;
+
+
+
+				cout << "DATOS INGRESADOS!" << endl;
+				break;
+			case 3:
+
+				break;
+			}
+			break;
+
+		case 2: // Agricultor
+			int op2;
+			cout << "Ingrese una de las opciones: " << endl;
+			cout << "1. Leer " << endl;
+			cout << "2. A�adir" << endl;
+			cin >> op2;
+			switch (op2)
+			{
+			case 1:
+
+				break;
+			case 2:
+				cout << "Ingrese nombre: ";
+				cin >> nombre;
+				cout << "Ingrese Edad: ";
+				cin >> edad;
+				cout << "Ingrese el carnet: ";
+				cin >> carnet;
+				cout << "Ingrese nacionalidad: ";
+				cin >> nacionalidad;
+				cout << "Ingrese Ocupacion: ";
+				cin >> ocupacion;
+				cout << "Ingrese horas trabajas por mes: ";
+				cin >> horas_trabajadas;
+				cout << "Ingrese salario: ";
+				cin >> salario;
+				cout << "Ingrese fecha de vinculacion: ";
+				cin >> fecha_vinculacion;
+				cout << "Ingrese fecha de retiro: ";
+				cin >> fecha_retiro;
+				cout << "Ingrese producto: ";
+				cin >> producto;
+
+				cout << "DATOS INGRESADOS!" << endl;
+				break;
+			default:
+				cout << "SELECCIONE UNA DE LAS OPCIONES" << endl;
+				break;
+			}
+			break;
+
+		case 3: // Vendedor /////////////////////////////
+
+			cout << "Ingrese una de las opciones: " << endl;
+			cout << "1. Leer " << endl;
+			cout << "2. A�adir" << endl;
+			cin >> op3;
+			switch (op3)
+			{
+			case 1:
+
+				break;
+			case 2:
+				cout << "Ingrese nombre: ";
+				cin >> nombre;
+				cout << "Ingrese Edad: ";
+				cin >> edad;
+				cout << "Ingrese el carnet: ";
+				cin >> carnet;
+				cout << "Ingrese nacionalidad: ";
+				cin >> nacionalidad;
+				cout << "Ingrese Ocupacion: ";
+				cin >> ocupacion;
+				cout << "Ingrese horas trabajas por mes: ";
+				cin >> horas_trabajadas;
+				cout << "Ingrese salario: ";
+				cin >> salario;
+				cout << "Ingrese fecha de vinculacion: ";
+				cin >> fecha_vinculacion;
+				cout << "Ingrese fecha de retiro: ";
+				cin >> fecha_retiro;
+				cout << "Ingrese el nombre producto vendido: ";
+				cin >> producto_vendidos;
+				cout << "Ingrese el total de producto mas vendido: ";
+				cin >> producto_total;
+
+
+				cout << "DATOS INGRESADOS!" << endl;
+				break;
+			}
+		case 0: // Salir
+			cout << "Saliendo ...." << endl;
+			salir = false;
+			break;
+		default:
+			cout << "SELECCIONE UNA DE LAS OPCIONES" << endl;
+			break;
+		}
+
+		//	}//Termina
+
+
+
+
+	}
+
+
+	system("pause");
+
+
+}
+
