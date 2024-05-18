@@ -1,0 +1,104 @@
+//RegistroServicio.h//
+#pragma once
+#include <iostream>
+#include <fstream>
+#include <string>
+using namespace std;
+
+class RegistroServicio {
+private:
+    string nombre;
+    string tipoServicio;
+    double precio;
+    double numeroRegistro;
+public:
+    RegistroServicio() : nombre(""), tipoServicio(""), precio(0), numeroRegistro(0) {} // Constructor
+    RegistroServicio(string nom, string tipoSer, double prec, double nReg); // Constructor con parámetros
+    void setRegistroServicio(string nom, string tipoSer, double prec, double nReg); // Método para establecer los datos del registro
+    string getNombre(); // Método para obtener el nombre del servicio
+    string getTipoServicio(); // Método para obtener el tipo de servicio
+    double getPrecio(); // Método para obtener el precio del servicio
+    double getNumeroRegistro(); // Método para obtener el número de registro
+
+    void guardarArchivo(ofstream& fsalida); // Método para guardar el registro en un archivo
+    bool leerArchivo(ifstream& fentrada); // Método para leer el registro desde un archivo
+    bool eliminar(fstream& fes, int nroReg); // Método para eliminar un registro del archivo
+    bool modificar(fstream& fes, int nroReg); // Método para modificar un registro del archivo
+    bool buscar(ifstream& fentrada, int nroReg); // Método para buscar un registro en el archivo
+    int getTamBytesRegistro(); // Método para obtener el tamaño en bytes de un registro
+};
+//RegistroServicio.cpp//
+include <iostream>
+#include <fstream>
+#include <string>
+#include "RegistroServicio.h"
+
+using namespace std;
+
+RegistroServicio::RegistroServicio() {
+    nombre = "";
+    tipoServicio = "";
+    precio = 0;
+    numeroRegistro = 0;
+}
+
+RegistroServicio::RegistroServicio(string nom, string tipoSer, double prec, double nReg) {
+    nombre = nom;
+    tipoServicio = tipoSer;
+    precio = prec;
+    numeroRegistro = nReg;
+}
+
+void RegistroServicio::setRegistroServicio(string nom, string tipoSer, double prec, double nReg) {
+    nombre = nom;
+    tipoServicio = tipoSer;
+    precio = prec;
+    numeroRegistro = nReg;
+}
+
+string RegistroServicio::getNombre() {
+    return nombre;
+}
+
+string RegistroServicio::getTipoServicio() {
+    return tipoServicio;
+}
+
+double RegistroServicio::getPrecio() {
+    return precio;
+}
+
+double RegistroServicio::getNumeroRegistro() {
+    return numeroRegistro;
+}
+void RegistroServicio::guardarArchivo(ofstream& fsalida) {
+    // Convertir las cadenas de caracteres a arreglos de caracteres
+    char nombreBuffer[50];
+    char tipoServicioBuffer[50];
+
+    // Copiar las cadenas en los buffers
+    strcpy(nombreBuffer, nombre.c_str());
+    strcpy(tipoServicioBuffer, tipoServicio.c_str());
+
+    // Escribir los datos en el archivo
+    fsalida.write(nombreBuffer, sizeof(nombreBuffer));
+    fsalida.write(tipoServicioBuffer, sizeof(tipoServicioBuffer));
+    fsalida.write(reinterpret_cast<char*>(&precio), sizeof(precio));
+    fsalida.write(reinterpret_cast<char*>(&numeroRegistro), sizeof(numeroRegistro));
+}
+bool RegistroServicio::leerArchivo(ifstream& fentrada) {
+    char nombreBuffer[50];
+    char tipoServicioBuffer[50];
+
+    // Leer los datos del archivo
+    fentrada.read(nombreBuffer, sizeof(nombreBuffer));
+    if (fentrada.eof()) {
+        return false; // No hay más registros
+    }
+    nombre = nombreBuffer;
+    fentrada.read(tipoServicioBuffer, sizeof(tipoServicioBuffer));
+    tipoServicio = tipoServicioBuffer;
+    fentrada.read(reinterpret_cast<char*>(&precio), sizeof(precio));
+    fentrada.read(reinterpret_cast<char*>(&numeroRegistro), sizeof(numeroRegistro));
+    return true;
+}
