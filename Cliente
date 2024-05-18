@@ -1,0 +1,75 @@
+//Cliente.h//
+#pragma once
+#include <iostream>
+
+class Cliente {
+public:
+    Cliente(); // Constructor
+    void mostrarMenu(); // Método para mostrar el menú
+    void registrarMantenimientoPreventivo(); // Método para registrar mantenimiento preventivo
+    void buscarServicios(); // Método para buscar servicios
+    void buscarProductos(); // Método para buscar productos
+private:
+    // Variables miembro o métodos privados si los hubiera
+};
+
+
+//Cliente.cpp//
+#include "Cliente.h"
+
+// Constructor
+Cliente::Cliente() {
+    // Inicialización de variables miembro si las hubiera
+}
+
+// Método para mostrar el menú
+void Cliente::mostrarMenu() {
+    int opcion;
+    do {
+        // Mostrar opciones del menú
+        std::cout << "----- MENU CLIENTE -----" << std::endl;
+        std::cout << "1. Registrar Mantenimiento Preventivo" << std::endl;
+        std::cout << "2. Buscar Servicios" << std::endl;
+        std::cout << "3. Buscar Productos" << std::endl;
+        std::cout << "4. Salir" << std::endl;
+        std::cout << "Seleccione una opcion: ";
+        std::cin >> opcion;
+
+        // Ejecutar la opción seleccionada
+        switch (opcion) {
+        case 1:
+            registrarMantenimientoPreventivo();
+            break;
+        case 2:
+            buscarServicios();
+            break;
+        case 3:
+            buscarProductos();
+            break;
+        case 4:
+            std::cout << "Saliendo..." << std::endl;
+            break;
+        default:
+            std::cout << "Opcion invalida. Intente de nuevo." << std::endl;
+        }
+    } while (opcion != 4);
+}
+
+// Método para registrar mantenimiento preventivo
+void Cliente::registrarMantenimientoPreventivo() {
+    // Implementación de la funcionalidad para registrar mantenimiento preventivo
+    std::cout << "Funcionalidad de registro de mantenimiento preventivo" << std::endl;
+}
+
+// Método para buscar servicios
+void Cliente::buscarServicios() {
+    // Implementación de la funcionalidad para buscar servicios
+    std::cout << "Funcionalidad de buscar servicios" << std::endl;
+}
+
+// Método para buscar productos
+void Cliente::buscarProductos() {
+    // Implementación de la funcionalidad para buscar productos
+    std::cout << "Funcionalidad de buscar productos" << std::endl;
+}
+
