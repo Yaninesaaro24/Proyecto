@@ -1,0 +1,132 @@
+//Usuario.h//
+#include <iostream>
+#include <fstream>
+#include <string>
+
+class Usuario {
+public:
+    Usuario(); // Constructor
+    Usuario(std::string nom, std::string co, int cel); // Constructor con parámetros
+    void setUsuario(std::string nom, std::string co, int cel); // Método para establecer datos de usuario
+    std::string getNombre(); // Método para obtener el nombre del usuario
+    std::string getCorreo(); // Método para obtener el correo del usuario
+    int getCelular(); // Método para obtener el número de celular del usuario
+    void guardarArchivo(std::ofstream& fsalida); // Método para guardar datos en un archivo
+    bool leerArchivo(std::ifstream& fentrada); // Método para leer datos desde un archivo
+    bool eliminar(std::fstream& fes, int nroReg); // Método para eliminar un registro
+    bool modificar(std::fstream& fes, int nroReg); // Método para modificar un registro
+    bool buscar(std::ifstream& fentrada, int nroReg); // Método para buscar un registro
+    int getTamBytesRegistro(); // Método para obtener el tamaño en bytes de un registro
+private:
+    std::string nombre; // Nombre del usuario
+    std::string correo; // Correo electrónico del usuario
+    int celular; // Número de celular del usuario
+    char estado; // Estado del registro (eliminado = 'E', activo = 'A')
+};
+//Usuario.cpp//
+#include "Usuario.h"
+
+Usuario::Usuario() {
+    nombre = "";
+    correo = "";
+    celular = 0;
+}
+
+Usuario::Usuario(std::string nom, std::string co, int cel) {
+    nombre = nom;
+    correo = co;
+    celular = cel;
+}
+
+void Usuario::setUsuario(std::string nom, std::string co, int cel) {
+    nombre = nom;
+    correo = co;
+    celular = cel;
+}
+
+std::string Usuario::getNombre() {
+    return nombre;
+}
+
+std::string Usuario::getCorreo() {
+    return correo;
+}
+
+int Usuario::getCelular() {
+    return celular;
+}
+
+void Usuario::guardarArchivo(std::ofstream& fsalida) {
+    fsalida.write(reinterpret_cast<char*>(&nombre), sizeof(nombre));
+    fsalida.write(reinterpret_cast<char*>(&correo), sizeof(correo));
+    fsalida.write(reinterpret_cast<char*>(&celular), sizeof(celular));
+}
+
+bool Usuario::leerArchivo(std::ifstream& fentrada) {
+    bool k = false;
+    if (fentrada.is_open()) {
+        fentrada.read(reinterpret_cast<char*>(&nombre), sizeof(nombre));
+        if (!fentrada.eof()) {
+            fentrada.read(reinterpret_cast<char*>(&correo), sizeof(correo));
+            fentrada.read(reinterpret_cast<char*>(&celular), sizeof(celular));
+            k = true;
+        }
+    }
+    return k;
+}
+
+bool Usuario::eliminar(std::fstream& fes, int nroReg) {
+    bool k = false;
+    if (fes.is_open()) {
+        fes.seekg(getTamBytesRegistro() * (nroReg - 1), std::ios::beg);
+        fes.read(reinterpret_cast<char*>(&nombre), sizeof(nombre));
+        if (!fes.eof()) {
+            fes.read(reinterpret_cast<char*>(&correo), sizeof(correo));
+            fes.read(reinterpret_cast<char*>(&celular), sizeof(celular));
+            estado = 'E';
+            fes.seekp(getTamBytesRegistro() * (nroReg - 1), std::ios::beg);
+            fes.write(reinterpret_cast<char*>(&nombre), sizeof(nombre));
+            fes.write(reinterpret_cast<char*>(&correo), sizeof(correo));
+            fes.write(reinterpret_cast<char*>(&celular), sizeof(celular));
+            k = true;
+        }
+    }
+    return k;
+}
+
+bool Usuario::modificar(std::fstream& fes, int nroReg) {
+    bool k = false;
+    if (fes.is_open()) {
+        std::string nomAux = nombre;
+        fes.seekg(getTamBytesRegistro() * (nroReg - 1), std::ios::beg);
+        fes.read(reinterpret_cast<char*>(&nombre), sizeof(nombre));
+        if (!fes.eof()) {
+            nombre = nomAux;
+            estado = 'A';
+            fes.seekp(getTamBytesRegistro() * (nroReg - 1), std::ios::beg);
+            fes.write(reinterpret_cast<char*>(&nombre), sizeof(nombre));
+            fes.write(reinterpret_cast<char*>(&correo), sizeof(correo));
+            fes.write(reinterpret_cast<char*>(&celular), sizeof(celular));
+            k = true;
+        }
+    }
+    return k;
+}
+
+bool Usuario::buscar(std::ifstream& fentrada, int nroReg) {
+    bool k = false;
+    if (fentrada.is_open()) {
+        fentrada.seekg(getTamBytesRegistro() * (nroReg - 1), std::ios::beg);
+        fentrada.read(reinterpret_cast<char*>(&nombre), sizeof(nombre));
+        if (!fentrada.eof()) {
+            fentrada.read(reinterpret_cast<char*>(&correo), sizeof(correo));
+            fentrada.read(reinterpret_cast<char*>(&celular), sizeof(celular));
+            k = true;
+        }
+    }
+    return k;
+}
+
+int Usuario::getTamBytesRegistro() {
+    return sizeof(nombre) + sizeof(correo) + sizeof(celular) + sizeof(estado);
+}
